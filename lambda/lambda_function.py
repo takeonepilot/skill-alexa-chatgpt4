@@ -1,6 +1,8 @@
 import logging
 import ask_sdk_core.utils as ask_utils
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key="substitua-pela-sua-chave-da-openai")
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
 from ask_sdk_core.dispatch_components import AbstractExceptionHandler
@@ -8,7 +10,7 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model import Response
 
 # Set your OpenAI API key
-openai.api_key = "substitua-pela-sua-chave-da-openai"
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -92,14 +94,12 @@ def generate_gpt_response(query):
         messages.append(
             {"role": "user", "content": query},
         )
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=messages,
-            max_tokens=1000,
-            n=1,
-            stop=None,
-            temperature=0.5
-        )
+        response = client.chat.completions.create(model="gpt-4",
+        messages=messages,
+        max_tokens=1000,
+        n=1,
+        stop=None,
+        temperature=0.5)
         reply = response['choices'][0]['message']['content'].strip()
         messages.append({"role": "assistant", "content": reply})
         return reply
